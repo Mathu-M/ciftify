@@ -4,8 +4,8 @@ Makes pictures of standard views from ciftify_recon_all outputs and pastes them
 together into a html page for quality assurance.
 
 Usage:
-    cifti_vis_recon_all snaps [options] <subject>
     cifti_vis_recon_all subject [options] <subject>
+    cifti_vis_recon_all snaps [options] <subject>
     cifti_vis_recon_all index [options]
 
 Arguments:
@@ -29,6 +29,8 @@ converted freesurfer outputs. The MNI transformed brains and fsaverage_LR surfac
 (32k meshes) is the "space" where fMRI analysis is done
 
 Requires connectome workbench (i.e. wb_command and imagemagick)
+
+The snaps command is the deprecated version of subject.
 
 Written by Erin W Dickie
 """

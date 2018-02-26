@@ -4,8 +4,8 @@ Makes pictures for quality assurance of fmri data and pastes them
 together into a html pages.
 
 Usage:
-    cifti_vis_fmri snaps [options] <NameOffMRI> <subject>
     cifti_vis_fmri subject [options] <NameOffMRI> <subject>
+    cifti_vis_fmri snaps [options] <NameOffMRI> <subject>
     cifti_vis_fmri index [options]
 
 Arguments:
@@ -42,6 +42,8 @@ Gross patterns of connetivity as more visible with some surface smoothing.
 So connectivity are shown either on the smoothed dtseries files indicated by the
 "--SmoothingFWHM" option, or they using temporary files smoothed with the kernel
 indicated by the ('--smoothed-conn') option (default value 8mm).
+
+The 'snaps' command is the deprecated version of the 'subject' command.
 
 Written by Erin W Dickie, Feb 2016
 """

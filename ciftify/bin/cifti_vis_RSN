@@ -4,10 +4,10 @@ Makes temporary seed correlation maps using 3 rois of interest
 then makes pretty picture of these maps.
 
 Usage:
-    cifti_vis_RSN cifti-snaps [options] <func.dtseries.nii> <subject>
     cifti_vis_RSN cifti-subject [options] <func.dtseries.nii> <subject>
-    cifti_vis_RSN nifti-snaps [options] <func.nii.gz> <subject>
     cifti_vis_RSN nifti-subject [options] <func.nii.gz> <subject>
+    cifti_vis_RSN cifti-snaps [options] <func.dtseries.nii> <subject>
+    cifti_vis_RSN nifti-snaps [options] <func.nii.gz> <subject>
     cifti_vis_RSN index [options]
 
 Arguments:
@@ -37,6 +37,8 @@ The default colour palette is videen_style. Some people like 'PSYCH-NO-NONE' bet
 For more info on palettes see wb_command help.
 
 Requires connectome workbench (i.e. wb_command and imagemagick)
+
+The snaps command is the deprecated version of subject.
 
 Written by Erin W Dickie, Feb 2016
 """

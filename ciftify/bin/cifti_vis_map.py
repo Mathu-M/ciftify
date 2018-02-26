@@ -4,10 +4,10 @@ Creates pngs of standard surface and subcortical views from a nifti or cifti
 input map.
 
 Usage:
-    cifti_vis_map cifti-snaps [options] <map.dscalar.nii> <subject> <map-name>
     cifti_vis_map cifti-subject [options] <map.dscalar.nii> <subject> <map-name>
-    cifti_vis_map nifti-snaps [options] <map.nii> <subject> <map-name>
     cifti_vis_map nifti-subject [options] <map.nii> <subject> <map-name>
+    cifti_vis_map cifti-snaps [options] <map.dscalar.nii> <subject> <map-name>
+    cifti_vis_map nifti-snaps [options] <map.nii> <subject> <map-name>
     cifti_vis_map index [options]
 
 Arguments:
@@ -41,6 +41,9 @@ By default, all folder in the qc directory will be included in the index.
 You can change the color palette for all pics using the --colour-palette flag.
 The default colour palette is videen_style. Some people like 'PSYCH-NO-NONE'
 better. For more info on palettes see wb_command help.
+
+The nifti-snaps and cifti-snaps commands are the deprecated versions of the
+nifti-subject and cifti-subject commands.
 
 Written by Erin W Dickie
 """

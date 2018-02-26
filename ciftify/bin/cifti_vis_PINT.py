@@ -4,8 +4,8 @@ Makes temporary seed corr maps using a chosen roi for each network and
 correlation maps
 
 Usage:
-    cifti_vis_PINT snaps [options] <func.dtseries.nii> <subject> <PINT_summary.csv>
     cifti_vis_PINT subject [options] <func.dtseries.nii> <subject> <PINT_summary.csv>
+    cifti_vis_PINT snaps [options] <func.dtseries.nii> <subject> <PINT_summary.csv>
     cifti_vis_PINT index [options]
 
 Arguments:
@@ -35,7 +35,7 @@ QC pages
 
 There are two subfunctions:
 
-    snaps: will create all the pics as well as the subjects specific html view
+    subject/ snaps: will create all the pics as well as the subjects specific html view
     for one subject. This option requires the cifti file of functionl
     timeseries. The hcp subject id so that it can find the surface information
     to plot on. And the *_summary.csv file that was the output of
@@ -45,6 +45,8 @@ There are two subfunctions:
 
 Note: this script requires the seaborn package to make the correlation
 heatmaps...
+
+Note 2: The snaps command is the deprecated version of subject.
 
 Written by Erin W Dickie (erin.w.dickie@gmail.com) Jun 20, 2016
 """
