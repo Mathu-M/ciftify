@@ -1,0 +1,61 @@
+Changed:
+  - utils
+    - (class) VisSettings
+      - (class var) self.hcp_dir
+      - (method) __set_hcp_dir
+  - ciftify_vol_result
+    - (class) UserSettings
+      - (class var) self.hcp_dir
+      - (method) __set_hcp_dir
+
+
+To Check:
+  - utils
+    - (class) HCPSettings - utils
+      - (class var) self.hcp_dir
+      - (method) __set_hcp_dir
+    - (class) VisSettings - utils
+      - (man) hcp-data-dir
+  - cifti_recon_all
+    - (class) Settings
+      - (class var) self.hcp_dir
+      - (method) __set_hcp_dir
+    - (class) UserSettings
+      - (class var) self.hcp_dir
+      - (method) __set_hcp_dir
+    - (class) Subject
+      - self.hcp_dir
+    - (function) run_ciftify_recon_all
+      - settings.hcp_dir
+    - (389 - function) log_inputs(hcp_dir)
+    - (470 - function) convert_T1_and_freesurfer_inputs(hcp_templates)
+    - (498 - function) convert_freesurfer_mgz(hcp_templates)
+    - (562 - function) convert_inputs_to_MNI_space(hcp_templates)
+    - (627 - function) apply_nonlinear_warp_to_nifti_rois(hcp_templates)
+    - (662 - function) create_cifti_subcortical_ROIs(hcp_data, hcp_templates)
+    - (1020 - function) copy_colin_flat_and_add_to_spec(hcp_dir)
+    - (1051 - function) copy_sphere_mesh_from_template(hcp_dir)
+    - (1071 - function) copy_atlas_roi_from_template(hcp_dir)
+    - (1320 - function) populate_low_res_spec_file(settings.hcp_dir)
+    - (1431 - function) resample_to_native(settingsd.hcp_dir)
+  - cifti_vis_PINT
+    - (class) UserSettings
+      - (class var) self.hcp_dir
+      - (method) __set_hcp_dir
+  - cifti_vis_map
+    - (class) UserSettings
+      - (class var) self.hcp_dir
+      - (method) __set_hcp_dir
+  - cifti_vis_fmri
+    - (class) UserSettings
+      - (class var) self.hcp_dir
+      - (method) __set_hcp_dir
+
+Not Sure:
+  - utils
+    - (class) TempSceneDir
+  - ciftify_vol_result
+    - (class) UserSettings
+      - (method) use_ciftify_global
+  - cifti_recon_all
+      - 'hcp_config' <- path?
