@@ -12,6 +12,7 @@ jobs:
             echo 'export PATH=/homeciftify/ciftify/bin:$PATH' >> $BASH_ENV
             echo 'export PYTHONPATH=/home/ciftify/:$PYTHONPATH' >> $BASH_ENV
             echo 'export CIFTIFY_TEMPLATES=/home/ciftify/data' >> $BASH_ENV
+            printenv
       - save_cache:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
           paths:
