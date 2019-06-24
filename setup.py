@@ -3,7 +3,7 @@ from setuptools.command.install import install
 import os.path
 import sys
 
-VERSION='2.3.2-beta'
+VERSION='2.3.2-2'
 
 here = os.path.abspath(os.path.dirname(__file__))
 

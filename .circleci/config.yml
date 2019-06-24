@@ -52,6 +52,7 @@ jobs:
           command: |
             apk add --no-cache bash pigz python3
             echo "export GIT_TAG=$(git describe --tags)" >> $BASH_ENV
+            echo $CIRCLE_TAG
       - restore_cache:
           keys:
             - docker-test-v1-{{ .Branch }}-{{ .Revision }}
