@@ -12,7 +12,8 @@ jobs:
             echo 'export PATH=/homeciftify/ciftify/bin:$PATH' >> $BASH_ENV
             echo 'export PYTHONPATH=/home/ciftify/:$PYTHONPATH' >> $BASH_ENV
             echo 'export CIFTIFY_TEMPLATES=/home/ciftify/data' >> $BASH_ENV
-            printenv
+            echo 'export GIT_TAG=$(git describe --tags)' >> $BASH_ENV
+            echo $CIRCLE_TAG
       - save_cache:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
           paths:
@@ -40,6 +41,30 @@ jobs:
             - "/home/venv"
           key:  deps1-{{ .Branch }}-{{ checksum "/home/ciftify/cifti_requirements.txt" }}
 
+  pytest:
+    docker:
+      - image: mmanogaran/ciftify_ci:0.1
+    steps:
+      - restore_cache:
+          keys:
+            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          keys:
+            - deps1-{{ .Branch }}-{{ checksum "/home/ciftify/cifti_requirements.txt" }}
+      - run:
+          name: run tests
+          command: |
+            source  /home/venv/bin/activate
+            mkdir -p /home/outputs/pytest/
+            cd /home/ciftify
+            pytest --junitxml=/home/outputs/pytest/results.xml tests/*py
+      - store_artifacts:
+          path: /home/outputs/pytest
+          destination: pytest
+      - store_test_results:
+          path: /home/outputs
+
+
   test_and_deploy_docker:
     docker:
       - image: docker:19.03-rc-git
@@ -52,7 +77,6 @@ jobs:
           command: |
             apk add --no-cache bash pigz python3
             echo "export GIT_TAG=$(git describe --tags)" >> $BASH_ENV
-            echo $CIRCLE_TAG
       - restore_cache:
           keys:
             - docker-test-v1-{{ .Branch }}-{{ .Revision }}
