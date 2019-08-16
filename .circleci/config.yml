@@ -248,7 +248,7 @@ workflows:
             - standard_tests
           filters:
             branches:
-              only: master
+              only: circleci_test
             tags:
               ignore: /.*/
       - test_and_deploy_pypi:
