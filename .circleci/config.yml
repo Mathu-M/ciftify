@@ -249,8 +249,6 @@ workflows:
           filters:
             branches:
               only: circleci_test
-            tags:
-              ignore: /.*/
       - test_and_deploy_pypi:
           requires:
             - functional_tests
