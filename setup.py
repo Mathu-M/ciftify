@@ -3,7 +3,7 @@ from setuptools.command.install import install
 import os.path
 import sys
 
-VERSION='2.3.2-2'
+VERSION='2.3.3-test'
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -21,12 +21,7 @@ class VerifyVersionCommand(install):
     description = 'verify that the git tag matches our version'
 
     def run(self):
-        circle_tag = os.getenv('CIRCLE_TAG')
         git_tag = os.getenv('GIT_TAG')
-
-        print("CIRCLE_TAG: {}".format(circle_tag))
-        print("GIT_TAG: {}".format(git_tag))
-
         if git_tag != VERSION:
             info = "Git tag: {0} does not match the version of this app: {1}".format(
                 git_tag, VERSION
@@ -74,6 +69,7 @@ setup(
             'ciftify_seed_corr=ciftify.bin.ciftify_seed_corr:main',
             'ciftify_subject_fmri=ciftify.bin.ciftify_subject_fmri:main',
             'ciftify_falff=ciftify.bin.ciftify_falff:main',
+            'ciftify_dlabel_to_vol=ciftify.bin.ciftify_dlabel_to_vol:main',
             'ciftify_statclust_report=ciftify.bin.ciftify_statclust_report:main',
             'extract_nuisance_regressors=ciftify.bin.extract_nuisance_regressors:main'
         ],

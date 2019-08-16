@@ -2,18 +2,16 @@ version: 2
 jobs:
   build:
     docker:
-      - image: mmanogaran/ciftify_ci:0.1
+      - image: tigrlab/ciftify_ci:0.1
     steps:
       - checkout:
           path: /home/ciftify
       - run:
           name: Set Paths
           command: |
-            echo 'export PATH=/homeciftify/ciftify/bin:$PATH' >> $BASH_ENV
+            echo 'export PATH=/home/ciftify/ciftify/bin:$PATH' >> $BASH_ENV
             echo 'export PYTHONPATH=/home/ciftify/:$PYTHONPATH' >> $BASH_ENV
             echo 'export CIFTIFY_TEMPLATES=/home/ciftify/data' >> $BASH_ENV
-            echo 'export GIT_TAG=$(git describe --tags)' >> $BASH_ENV
-            echo $CIRCLE_TAG
       - save_cache:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
           paths:
@@ -21,7 +19,7 @@ jobs:
 
   dependencies:
     docker:
-      - image: mmanogaran/ciftify_ci:0.1
+      - image: tigrlab/ciftify_ci:0.1
     steps:
       - restore_cache:
           keys:
@@ -41,9 +39,9 @@ jobs:
             - "/home/venv"
           key:  deps1-{{ .Branch }}-{{ checksum "/home/ciftify/cifti_requirements.txt" }}
 
-  pytest:
+  standard_tests:
     docker:
-      - image: mmanogaran/ciftify_ci:0.1
+      - image: tigrlab/ciftify_ci:0.1
     steps:
       - restore_cache:
           keys:
@@ -55,15 +53,37 @@ jobs:
           name: run tests
           command: |
             source  /home/venv/bin/activate
-            mkdir -p /home/outputs/pytest/
+            mkdir -p /home/outputs/standard_tests/
             cd /home/ciftify
-            pytest --junitxml=/home/outputs/pytest/results.xml tests/*py
+            pytest --junitxml=/home/outputs/standard_tests/results.xml tests/*py
       - store_artifacts:
-          path: /home/outputs/pytest
-          destination: pytest
+          path: /home/outputs/standard_tests
+          destination: standard_tests
       - store_test_results:
           path: /home/outputs
 
+  functional_tests:
+    docker:
+      - image: tigrlab/ciftify_ci:0.1
+    steps:
+      - restore_cache:
+          keys:
+            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          keys:
+            - deps1-{{ .Branch }}-{{ checksum "/home/ciftify/cifti_requirements.txt" }}
+      - run:
+          name: run tests
+          command: |
+            source  /home/venv/bin/activate
+            mkdir -p /home/outputs/functional_tests/
+            cd /home/ciftify
+            pytest --junitxml=/home/outputs/functional_tests/results.xml tests/functional/*py
+      - store_artifacts:
+          path: /home/outputs/functional_tests
+          destination: functional_tests
+      - store_test_results:
+          path: /home/outputs
 
   test_and_deploy_docker:
     docker:
@@ -99,17 +119,17 @@ jobs:
           command: |
             cd ciftify/bidsapp
             docker build \
-              --cache-from=mmanogaran/fmriprep_ciftify \
+              --cache-from=tigrlab/fmriprep_ciftify \
               --rm=false \
-              -t mmanogaran/fmriprep_ciftify:latest .
+              -t tigrlab/fmriprep_ciftify:latest .
       - run:
           name: Test Docker Version
           command: |
             source $BASH_ENV
-            FMRIPREP_VERSION=$(docker run --entrypoint='' mmanogaran/fmriprep_ciftify:latest fmriprep --version)
+            FMRIPREP_VERSION=$(docker run --entrypoint='' tigrlab/fmriprep_ciftify:latest fmriprep --version)
             FVERSION=$(echo $FMRIPREP_VERSION | cut -d" " -f2)
             echo "VERSION: ${FVERSION}-${GIT_TAG}"
-            # DOCKERVERSION=$(docker run --rm -it mmanogaran/fmriprep_ciftify:latest --version)
+            # DOCKERVERSION=$(docker run --rm -it tigrlab/fmriprep_ciftify:latest --version)
             # echo "DOCKERVERSION: ${DOCKERVERSION}"
             # test "$DOCKERVERSION" = "${FVERSION}-${GIT_TAG}"
       - run:
@@ -117,7 +137,7 @@ jobs:
           no_output_timeout: 30m
           command: |
             mkdir -p /tmp/cache
-            docker save poldracklab/fmriprep:1.3.2 mmanogaran/fmriprep_ciftify:latest \
+            docker save poldracklab/fmriprep:1.3.2 tigrlab/fmriprep_ciftify:latest \
             | pigz -3 > /tmp/cache/docker.tar.gz
       - save_cache:
           key: docker-test-v1-{{ .Branch }}-{{ .Revision }}-{{ epoch }}
@@ -128,23 +148,22 @@ jobs:
           no_output_timeout: 40m
           command: |
             source $BASH_ENV
-            FMRIPREP_VERSION=$(docker run --entrypoint='' mmanogaran/fmriprep_ciftify:latest fmriprep --version)
+            FMRIPREP_VERSION=$(docker run --entrypoint='' tigrlab/fmriprep_ciftify:latest fmriprep --version)
             FVERSION=$(echo $FMRIPREP_VERSION | cut -d" " -f2)
-            echo "VERSION: ${FVERSION}-${GIT_TAG}"
             if [[ -n "$DOCKER_PASS" ]]; then
               docker login -u $DOCKER_USER -p $DOCKER_PASS
-              docker tag mmanogaran/fmriprep_ciftify mmanogaran/fmriprep_ciftify:unstable
-              docker push mmanogaran/fmriprep_ciftify:unstable
+              docker tag tigrlab/fmriprep_ciftify tigrlab/fmriprep_ciftify:unstable
+              docker push tigrlab/fmriprep_ciftify:unstable
               if [[ -n "$GIT_TAG" ]]; then
-                docker push mmanogaran/fmriprep_ciftify:latest
-                docker tag mmanogaran/fmriprep_ciftify:latest mmanogaran/fmriprep_ciftify:${FVERSION}-${GIT_TAG}
-                docker push mmanogaran/fmriprep_ciftify:${FVERSION}-${GIT_TAG}
+                docker push tigrlab/fmriprep_ciftify:latest
+                docker tag tigrlab/fmriprep_ciftify:latest tigrlab/fmriprep_ciftify:${FVERSION}-${GIT_TAG}
+                docker push tigrlab/fmriprep_ciftify:${FVERSION}-${GIT_TAG}
               fi
             fi
 
   test_and_deploy_pypi:
     docker:
-      - image: mmanogaran/ciftify_ci:0.1
+      - image: tigrlab/ciftify_ci:0.1
     working_directory: /home/ciftify
     steps:
       - checkout:
@@ -169,33 +188,33 @@ jobs:
             echo -e "\ttestpypi" >> ~/.pypirc
             echo -e "[pypi]" >> ~/.pypirc
             echo -e "username = $PYPI_USER" >> ~/.pypirc
-            echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
+            echo -e "password = $PYPI_PASS" >> ~/.pypirc
             echo -e "[testpypi]" >> ~/.pypirc
             echo -e "repository: https://test.pypi.org/legacy/" >> ~/.pypirc
             echo -e "username = $TESTPYPI_USER" >> ~/.pypirc
-            echo -e "password = $TESTPYPI_PASSWORD" >> ~/.pypirc
+            echo -e "password = $TESTPYPI_PASS" >> ~/.pypirc
       - run:
           name: Create Packages
           command: |
             source /home/pypi_env/bin/activate
             python /home/ciftify/setup.py sdist
             python /home/ciftify/setup.py bdist_wheel
-      # - run:
-      #     name: Upload To testpypi
-      #     command: |
-      #       source /home/pypi_env/bin/activate
-      #       twine upload --verbose --repository testpypi dist/*
+      - run:
+          name: Upload To testpypi
+          command: |
+            source /home/pypi_env/bin/activate
+            twine upload --verbose --repository testpypi dist/*
       - run:
           name: Try testpypi
           command: |
             python3 -m venv /home/testpypi
             source /home/testpypi/bin/activate
             pip install -i https://test.pypi.org/simple/ --no-deps ciftify
-      # - run:
-      #     name: Upload To pypi
-      #     command: |
-      #       source /home/pypi_env/bin/activate
-      #       twine upload --verbose --repository pypi dist/*
+      - run:
+          name: Upload To pypi
+          command: |
+            source /home/pypi_env/bin/activate
+            twine upload --verbose --repository pypi dist/*
 
 
 workflows:
@@ -216,7 +235,7 @@ workflows:
               only: /.*/
             tags:
               only: /.*/
-      - pytest:
+      - standard_tests:
           requires:
             - dependencies
           filters:
@@ -224,19 +243,27 @@ workflows:
               only: /.*/
             tags:
               only: /.*/
-      - test_and_deploy_pypi:
+      - functional_tests:
           requires:
-            - pytest
+            - standard_tests
           filters:
             branches:
-              only: /.*/
+              only: master
             tags:
-              only: /^[0-9]\.[0-9]\.[0-9]-?([0-9]*|alpha|beta)$/
-      - test_and_deploy_docker:
+              ignore: /.*/
+      - test_and_deploy_pypi:
           requires:
-            - pytest
+            - functional_tests
           filters:
             branches:
               ignore: /.*/
             tags:
-              only: /^[0-9]\.[0-9]\.[0-9]-?([0-9]*|alpha|beta)$/
+              only: /^[0-9]\.[0-9]\.[0-9](-[0-9]+|-alpha|-beta)?$/
+      - test_and_deploy_docker:
+          requires:
+            - functional_tests
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^[0-9]\.[0-9]\.[0-9](-[0-9]+|-alpha|-beta)?$/

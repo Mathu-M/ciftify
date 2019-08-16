@@ -29,9 +29,9 @@ to text using the '--outputlabels' option.
 
 If the seed file contains multiple interger values (i.e. an altas). One row will
 be written for each integer value. If you only want a timeseries from one roi in
-an atlas, you can specify the integer with the --roi-label option.
+an atlas, you can specify the integer with the '--roi-label' option.
 
-A weighted avereage can be calculated from a continuous seed if the --weighted
+A weighted avereage can be calculated from a continuous seed if the '--weighted'
 flag is given.
 
 If a mask is given, the intersection of this mask and the seed mask will be taken.
@@ -99,7 +99,7 @@ def cifti_parcellate_to_meants(settings):
             tmp_parcelated = os.path.join(tempdir, 'parcellated.pscalar.nii')
         ciftify.utils.run(['wb_command', '-cifti-parcellate',
             settings.func.path, settings.seed.path,
-            'COLUMN', tmp_parcelated])
+            'COLUMN', tmp_parcelated, '-include-empty'])
         ciftify.utils.run(['wb_command', '-cifti-convert', '-to-text',
             tmp_parcelated, settings.outputcsv,'-col-delim ","'])
         if settings.outputlabels:

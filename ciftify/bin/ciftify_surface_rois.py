@@ -34,9 +34,9 @@ Example:
   7980, R
   ...
 
-The column (header) names can be indicated with the (--vertex-col, and --hemi-col)
+The column (header) names can be indicated with the ('--vertex-col', and '--hemi-col')
 arguments. Additionally, a third column can be given of interger labels to apply to
-these ROIs, indicated by the "--labels-col" option.
+these ROIs, indicated by the '--labels-col' option.
 
 The  argument to -overlap-logic must be one of ALLOW, CLOSEST, or EXCLUDE.
  ALLOW is the default, and means that ROIs are treated independently and may overlap.
@@ -109,7 +109,7 @@ def run_ciftify_surface_rois(arguments, tmpdir):
         vertices = df.loc[df[hemi_col] == hemisphere, vertex_col]
         logger.info('{} vertices are: {}'.format(hemisphere, vertices))
         if len(vertices) > 0:
-            vertices.to_csv(vertex_list,sep='\n',index=False)
+            vertices.to_csv(vertex_list,sep='\n',index=False, header = False)
 
             if gaussian:
                 run(['wb_command', '-surface-geodesic-rois', surf,
@@ -133,7 +133,7 @@ def run_ciftify_surface_rois(arguments, tmpdir):
                       rois_2D, 'SUM', rois_1D])
 
         else:
-            pd.Series([1]).to_csv(vertex_list,sep='\n',index=False)
+            pd.Series([1]).to_csv(vertex_list,sep='\n',index=False, header = False)
             run(['wb_command', '-surface-geodesic-rois', surf,
                 str(radius),  vertex_list, rois_2D])
             run(['wb_command -metric-math "x*0"', rois_1D,
